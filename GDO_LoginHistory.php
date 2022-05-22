@@ -11,7 +11,7 @@ use GDO\Core\GDT_CreatedAt;
  * Login history GDO entity / table.
  * 
  * @author gizmore
- * @version 7.0.1
+ * @version 7.0.0
  * @since 3.1.0
  */
 class GDO_LoginHistory extends GDO

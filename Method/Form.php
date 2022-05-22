@@ -26,7 +26,7 @@ use GDO\Form\GDT_Validator;
  * Login via GDOv6.11 credentials form and method.
  * 
  * @author gizmore
- * @version 7.0.1
+ * @version 7.0.0
  * @since 1.0.0
  */
 final class Form extends MethodForm
@@ -191,7 +191,7 @@ final class Form extends MethodForm
 		$mail->setSubject(t('mail_subj_login_threat', [sitename()]));
 		$revealIP = Module_Login::instance()->cfgFailureIPReveal();
 		$ip = $revealIP ? GDT_IP::current() : 'xx.xx.xx.xx';
-		$args = [$user->displayName(), sitename(), $ip];
+		$args = [$user->renderName(), sitename(), $ip];
 		$mail->setBody(t('mail_body_login_threat', $args));
 		$mail->sendToUser($user);
 	}

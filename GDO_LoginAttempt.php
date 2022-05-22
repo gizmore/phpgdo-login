@@ -11,7 +11,7 @@ use GDO\User\GDT_User;
  * Database table for login attempts.
  * 
  * @author gizmore
- * @version 7.0.1
+ * @version 7.0.0
  * @since 2.0
  */
 final class GDO_LoginAttempt extends GDO

@@ -19,7 +19,7 @@ use GDO\UI\GDT_Page;
  * - Warnings on failed logins (optionally show attacker IP to affected user)
  * 
  * @author gizmore@wechall.net
- * @version 7.0.2
+ * @version 7.0.0
  * @since 3.0.0
  */
 final class Module_Login extends GDO_Module
