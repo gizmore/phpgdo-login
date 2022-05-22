@@ -24,7 +24,7 @@ final class LoginTest extends TestCase
             'bindip' => '0',
         );
         
-        $m = GDT_MethodTest::make()->method(Form::make())->parameters($parameters);
+        $m = GDT_MethodTest::make()->method(Form::make())->inputs($parameters);
         $m->execute();
         
         $user1 = GDO_User::current();
@@ -41,7 +41,7 @@ final class LoginTest extends TestCase
         GDT_MethodTest::make()->method(Logout::make())->execute();
         
         $user = GDO_User::current();
-        assertFalse($user->isAuthenticated());
+        assertFalse($user->isUser(), 'Test if user can logout.');
         
         $parameters = array(
             'login' => 'gizmore',
@@ -49,13 +49,11 @@ final class LoginTest extends TestCase
             'bindip' => '0',
         );
         
-        GDT_MethodTest::make()->method(Form::make())->parameters($parameters)->execute();
-        
-        GDT_MethodTest::make()->method(Form::make())->parameters($parameters)->execute();
-        
-        GDT_MethodTest::make()->method(Form::make())->parameters($parameters)->execute();
-        
-        GDT_MethodTest::make()->method(Form::make())->parameters($parameters)->execute();
+        # Trigger ban!
+        for ($i = 0; $i < 4; $i++)
+        {
+        	GDT_MethodTest::make()->method(Form::make())->inputs($parameters)->execute();
+        }
        
         $html = Website::$TOP_RESPONSE->renderCell();
         assertStringContainsString('Please wait', $html, 'Check if login is blocked after N attempts.');
