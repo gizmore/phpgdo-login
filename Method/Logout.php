@@ -10,7 +10,7 @@ use GDO\User\GDO_User;
  * Logout method.
  * 
  * @author gizmore
- * @version 6.10.3
+ * @version 7.0.2
  * @since 1.0.0
  */
 final class Logout extends Method
