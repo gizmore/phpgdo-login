@@ -123,7 +123,7 @@ final class Form extends MethodForm
     		$session->setVar('sess_ip', GDT_IP::current());
         }
 		GDT_Hook::callWithIPC('UserAuthenticated', $user);
-		return $this->message('msg_authenticated', [$user->displayNameLabel()]);
+		return $this->message('msg_authenticated', [$user->renderUserName()]);
 	}
 
 	################

@@ -11,7 +11,13 @@ use GDO\User\GDO_User;
 use function PHPUnit\Framework\assertStringContainsString;
 use GDO\Core\Website;
 use GDO\Language\Trans;
+use GDO\UI\GDT_Page;
 
+/**
+ * Login test.
+ * 
+ * @author gizmore
+ */
 final class LoginTest extends TestCase
 {
     public function testLoginSuccess()
@@ -55,7 +61,8 @@ final class LoginTest extends TestCase
         	GDT_MethodTest::make()->method(Form::make())->inputs($parameters)->execute();
         }
        
-        $html = Website::$TOP_RESPONSE->renderCell();
+        $html = GDT_Page::instance()->topResponse()->render();
+        
         assertStringContainsString('Please wait', $html, 'Check if login is blocked after N attempts.');
     }
     
