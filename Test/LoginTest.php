@@ -27,37 +27,41 @@ final class LoginTest extends TestCase
 		$parameters = array(
 			'login' => 'gizmore',
 			'password' => '11111111',
-			'bindip' => '0',
+			'bind_ip' => '0',
+			'submit' => '1',
 		);
 
-		$m = GDT_MethodTest::make()->method(Form::make())->inputs(
-			$parameters);
-		$m->execute();
+		$m = GDT_MethodTest::make()->method(Form::make());
+		$m->inputs($parameters);
+		$r = $m->execute();
 
 		$user1 = GDO_User::current();
 		$user2 = $this->gizmore();
 
 		assertTrue($user1 === $user2,
 			'Check if gizmore can login.');
+		
 	}
 
 	public function testLogout()
 	{
 		//
-		Trans::setISO('en'); # some stupid bug?
-		$user = GDO_User::current();
+// 		Trans::setISO('en'); # some stupid bug?
 		GDT_MethodTest::make()->method(Logout::make())->execute();
+		$user = GDO_User::current();
 		assertFalse($user->isUser(), 'Test if user can logout.');
 	}
 
 	public function testLogoutAndLoginBlocked()
 	{
+		$this->userGhost();
 
 		# Trigger ban!
 		$parameters = array(
 			'login' => 'gizmore',
 			'password' => 'incorrect',
-			'bindip' => '0',
+			'bind_ip' => '0',
+			'submit' => '1',
 		);
 		for ($i = 0; $i < 4; $i++)
 		{
@@ -65,8 +69,9 @@ final class LoginTest extends TestCase
 				->inputs($parameters)
 				->execute();
 		}
+
 		$response = GDT_Page::instance()->topResponse();
-		$html = $response->renderMode();
+		$html = $response->render();
 		assertStringContainsString('Please wait', $html,
 			'Check if login is blocked after N attempts.');
 	}

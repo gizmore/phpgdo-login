@@ -38,9 +38,10 @@ final class Form extends MethodForm
 	public function createForm(GDT_Form $form) : void
 	{
 		$form->action(href('Login', 'Form'));
-		$form->addField(GDT_String::make('login')->icon('face')->tooltip('tt_login')->notNull());
-		$form->addField(GDT_Validator::make('validateDeleted')->validator('login', [$this, 'validateDeleted']));
-		$form->addField(GDT_Validator::make('validateType')->validator('login', [$this, 'validateType']));
+		$login = GDT_String::make('login')->icon('face')->tooltip('tt_login')->notNull();
+		$form->addField($login);
+		$form->addField(GDT_Validator::make('validateDeleted')->validator($form, $login, [$this, 'validateDeleted']));
+		$form->addField(GDT_Validator::make('validateType')->validator($form, $login, [$this, 'validateType']));
 		$form->addField(GDT_Password::make('password')->notNull());
 		$form->addField(GDT_Checkbox::make('bind_ip')->tooltip('tt_bind_ip')->initial('1'));
 		if (Module_Login::instance()->cfgCaptcha())
@@ -83,7 +84,7 @@ final class Form extends MethodForm
 	
 	public function formValidated(GDT_Form $form)
 	{
-		return $this->onLogin($form->getFormVar('login'), $form->getFormVar('password'), $form->getFormValue('bind_ip'));
+		return $this->onLogin($form->getInput('login'), $form->getInput('password'), $form->getInput('bind_ip'));
 	}
 	
 	public function onLogin($login, $password, $bindIP=false)
@@ -92,10 +93,8 @@ final class Form extends MethodForm
 		{
 			return $response->addField($this->renderPage());
 		}
-		
 		$user = GDO_User::getByLogin($login);
-		$hash = $user ? $user->getValue('user_password') : null;
-		
+		$hash = $user ? $user->gdoValue('user_password') : null;
 		if ( (!$user) ||
 		     (!$hash) ||
 		     (!$hash->validate($password)) )
@@ -117,7 +116,7 @@ final class Form extends MethodForm
 			return $this->error('err_session_required');
 		}
 		$session->setVar('sess_user', $user->getID());
-		GDO_User::setCurrent($user);
+		GDO_User::setCurrent($user, true);
         if ($bindIP)
         {
     		$session->setVar('sess_ip', GDT_IP::current());
@@ -180,7 +179,10 @@ final class Form extends MethodForm
 		$condition = sprintf('la_user_id=%s AND la_time > FROM_UNIXTIME(%d)', $user->getID(), $this->banCut());
 		if (1 === $table->countWhere($condition))
 		{
-			$this->mailSecurityThreat($user);
+			if (module_enabled('Mail'))
+			{
+				$this->mailSecurityThreat($user);
+			}
 		}
 	}
 	
