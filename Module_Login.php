@@ -31,7 +31,8 @@ final class Module_Login extends GDO_Module
 	##############
     public function getClasses() : array { return [GDO_LoginAttempt::class, GDO_LoginHistory::class]; }
 	public function onLoadLanguage() : void { $this->loadLanguage('lang/login'); }
-    public function getFriendencies() : array { return ['Captcha']; }
+	public function getDependencies() : array { return ['Session']; }
+	public function getFriendencies() : array { return ['Captcha']; }
 	
 	##############
 	### Config ###
