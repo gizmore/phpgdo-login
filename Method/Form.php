@@ -23,7 +23,7 @@ use GDO\Core\GDT_String;
 use GDO\Form\GDT_Validator;
 
 /**
- * Login via GDOv6.11 credentials form and method.
+ * Login via GDOv7 credentials. Form and method.
  * 
  * @author gizmore
  * @version 7.0.0
@@ -31,6 +31,16 @@ use GDO\Form\GDT_Validator;
  */
 final class Form extends MethodForm
 {
+	public function getMethodTitle() : string
+	{
+		return t('login');
+	}
+	
+	public function getMethodDescription() : string
+	{
+		return t('login');
+	}
+	
 	public function isUserRequired() : bool { return false; }
 	
 	public function getUserType() : string { return 'ghost,guest'; }

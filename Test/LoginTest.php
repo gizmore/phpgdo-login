@@ -9,7 +9,6 @@ use function PHPUnit\Framework\assertTrue;
 use function PHPUnit\Framework\assertFalse;
 use GDO\User\GDO_User;
 use function PHPUnit\Framework\assertStringContainsString;
-use GDO\Language\Trans;
 use GDO\UI\GDT_Page;
 
 /**
@@ -19,7 +18,6 @@ use GDO\UI\GDT_Page;
  */
 final class LoginTest extends TestCase
 {
-
 	public function testLoginSuccess()
 	{
 		$this->userGhost();
@@ -33,7 +31,7 @@ final class LoginTest extends TestCase
 
 		$m = GDT_MethodTest::make()->method(Form::make());
 		$m->inputs($parameters);
-		$r = $m->execute();
+		$m->execute();
 
 		$user1 = GDO_User::current();
 		$user2 = $this->gizmore();

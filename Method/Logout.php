@@ -15,8 +15,16 @@ use GDO\User\GDO_User;
  */
 final class Logout extends Method
 {
-	public function getTitleLangKey() { return 'logout'; }
-
+	public function getMethodTitle() : string
+	{
+		return t('logout');
+	}
+	
+	public function getMethodDescription() : string
+	{
+		return t('logout');
+	}
+	
 	public function execute()
 	{
 		$user = GDO_User::current();

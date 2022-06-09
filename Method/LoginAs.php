@@ -23,6 +23,16 @@ final class LoginAs extends MethodForm
 {
 	use MethodAdmin;
 	
+	public function getMethodTitle() : string
+	{
+		return t('login_as');
+	}
+	
+	public function getMethodDescription() : string
+	{
+		return $this->getMethodTitle();
+	}
+	
 	##############
 	### Method ###
 	##############

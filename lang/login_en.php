@@ -1,5 +1,6 @@
 <?php
-return array(
+namespace GDO\Login\lang;
+return [
 'ft_login_form' => 'Login',
 'tt_login' => 'Enter your username or email.',
 'tt_bind_ip' => 'Lock your session to your current IP.',
@@ -28,5 +29,5 @@ Kind Regards,
 The %2$s Team
 ',
 #########
-'mdescr_login_form' => 'Login',
-);
+'login_as' => 'Login As',
+];
