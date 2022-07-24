@@ -43,7 +43,7 @@ final class Form extends MethodForm
 	
 	public function isUserRequired() : bool { return false; }
 	
-	public function getUserType() : string { return 'ghost,guest'; }
+	public function getUserType() : ?string { return 'ghost,guest'; }
 	
 	public function createForm(GDT_Form $form) : void
 	{
