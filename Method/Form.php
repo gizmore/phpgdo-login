@@ -26,11 +26,16 @@ use GDO\Form\GDT_Validator;
  * Login via GDOv7 credentials. Form and method.
  * 
  * @author gizmore
- * @version 7.0.0
+ * @version 7.0.1
  * @since 1.0.0
  */
 final class Form extends MethodForm
 {
+	public function checkPermission(GDO_User $user)
+	{
+		return true;
+	}
+	
 	public function getMethodTitle() : string
 	{
 		return t('login');
