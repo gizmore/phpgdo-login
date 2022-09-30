@@ -68,11 +68,11 @@ final class Module_Login extends GDO_Module
     		$navbar = GDT_Page::instance()->rightBar();
     		if (!$user->isUser())
     		{
-    			$navbar->addField(GDT_Link::make('signin')->label('btn_login')->href(href('Login', 'Form')));
+    			$navbar->addField(GDT_Link::make('signin')->text('btn_login')->href(href('Login', 'Form')));
     		}
     		else
     		{
-    			$navbar->addField(GDT_Link::make('signout')->label('btn_logout', [$user->renderUserName()])->href(href('Login', 'Logout')));
+    			$navbar->addField(GDT_Link::make('signout')->text('btn_logout', [$user->renderUserName()])->href(href('Login', 'Logout')));
     		}
 	    }
 	}
