@@ -11,7 +11,7 @@ return [
 'btn_logout' => 'Ausloggen (%s)',
 'logout' => 'Abmelden',
 'msg_logged_out' => 'Sie sind nun ausgeloggt.',
-'msg_authenticated' => 'Willkommen zurück. Sie sind nun authentifiziert als %s.',
+'msg_authenticated' => 'Willkommen zurück. Sie sind nun authentifiziert als %s.<br/>Schauen Sie im rechten Menü für individuelle Funktionen.',
 
 'err_user_deleted' => 'Dieses Konto wurde als gelöscht markiert. Bitte wenden Sie sich an einen Mitarbeiter dieser Webseite.',
 'err_login_failed' => 'Einloggen fehlgeschlagen. Sie haben noch %s Versuch(e) bis Sie für %s geblockt werden.',

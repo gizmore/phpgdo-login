@@ -21,6 +21,7 @@ use GDO\User\GDO_User;
 use GDO\UI\GDT_Success;
 use GDO\Core\GDT_String;
 use GDO\Form\GDT_Validator;
+use GDO\Net\GDT_Url;
 
 /**
  * Login via GDOv7 credentials. Form and method.
@@ -59,6 +60,7 @@ final class Form extends MethodForm
 		$form->addField(GDT_Validator::make('validateType')->validator($form, $login, [$this, 'validateType']));
 		$form->addField(GDT_Password::make('password')->notNull());
 		$form->addField(GDT_Checkbox::make('bind_ip')->tooltip('tt_bind_ip')->initial('1'));
+		$form->addField(GDT_Url::make('_backto')->allowInternal()->hidden());
 		if (Module_Login::instance()->cfgCaptcha())
 		{
 			$form->addField(GDT_Captcha::make());
@@ -137,7 +139,11 @@ final class Form extends MethodForm
     		$session->setVar('sess_ip', GDT_IP::current());
         }
 		GDT_Hook::callWithIPC('UserAuthenticated', $user);
-		return $this->message('msg_authenticated', [$user->renderUserName()]);
+		$this->message('msg_authenticated', [$user->renderUserName()]);
+		if ($href = $this->gdoParameterVar('_backto'))
+		{
+			$this->message('msg_back_to', [html($href)]);
+		}
 	}
 
 	################
