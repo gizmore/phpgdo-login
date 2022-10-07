@@ -18,33 +18,29 @@ use GDO\UI\GDT_Page;
  */
 final class LoginTest extends TestCase
 {
+	
 	public function testLoginSuccess()
 	{
 		$this->userGhost();
 
-		$parameters = array(
+		$p = [
 			'login' => 'gizmore',
 			'password' => '11111111',
 			'bind_ip' => '0',
 			'submit' => '1',
-		);
-
+		];
 		$m = GDT_MethodTest::make()->method(Form::make());
-		$m->inputs($parameters);
-		$m->execute();
+		$m->inputs($p)->execute();
 
 		$user1 = GDO_User::current();
 		$user2 = $this->gizmore();
 
-		assertTrue($user1 === $user2,
-			'Check if gizmore can login.');
-		
+		assertTrue($user1->getID() === $user2->getID(), 'Check if gizmore can login.');
+		assertTrue($user1 === $user2, 'Check if process cache works if gizmore can login.');
 	}
 
 	public function testLogout()
 	{
-		//
-// 		Trans::setISO('en'); # some stupid bug?
 		GDT_MethodTest::make()->method(Logout::make())->execute();
 		$user = GDO_User::current();
 		assertFalse($user->isUser(), 'Test if user can logout.');
