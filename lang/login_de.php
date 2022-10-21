@@ -32,4 +32,5 @@ Das %2$s Team
 ',
 #########
 	'login_as' => 'Anmelden als',
+	'msg_back_to' => 'Klicken Sie <a href="%s">hier</a> um fortzufahren.',
 ];

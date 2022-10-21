@@ -30,5 +30,5 @@ Il vostro %2$s Team
 ',
 #########
 	'login_as' => 'Accedi come',
-	
+	'msg_back_to' => 'Fai clic <a href="%s">qui</a> per continuare.',
 ];
