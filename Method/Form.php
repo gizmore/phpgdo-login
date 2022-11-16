@@ -111,7 +111,7 @@ final class Form extends MethodForm
 			return $response->addField($this->renderPage());
 		}
 		$user = GDO_User::getByLogin($login);
-		$hash = $user ? $user->gdoValue('user_password') : null;
+		$hash = $user ? Module_Login::instance()->userSettingValue($user, 'password') : null;
 		if ( (!$user) ||
 		     (!$hash) ||
 		     (!$hash->validate($password)) )

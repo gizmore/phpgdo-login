@@ -5,9 +5,11 @@ use GDO\Core\GDO_Module;
 use GDO\Date\GDT_Duration;
 use GDO\Core\GDT_Checkbox;
 use GDO\Core\GDT_Int;
+use GDO\Register\GDO_UserActivation;
 use GDO\UI\GDT_Link;
 use GDO\User\GDO_User;
 use GDO\UI\GDT_Page;
+use GDO\Crypto\GDT_PasswordHash;
 
 /**
  * Login module for GDOv7.
@@ -57,6 +59,16 @@ final class Module_Login extends GDO_Module
 	public function cfgRightBar() : bool { return $this->getConfigValue('login_right_bar'); }
 	public function cfgLoginAs() : bool { return $this->getConfigValue('login_as'); }
 	
+	################
+	### Settings ###
+	################
+	public function getUserConfig(): array
+	{
+		return [
+			GDT_PasswordHash::make('password'),
+		];
+	}
+	
 	##############
 	### Navbar ###
 	##############
@@ -75,6 +87,20 @@ final class Module_Login extends GDO_Module
     			$navbar->addField(GDT_Link::make('signout')->text('btn_logout', [$user->renderUserName()])->href(href('Login', 'Logout')));
     		}
 	    }
+	}
+	
+	#############
+	### Hooks ###
+	#############
+	public function hookUserActivated(GDO_User $user, ?GDO_UserActivation $activation): void
+	{
+		if ($activation)
+		{
+			if ($hash = $activation->getPasswordHash())
+			{
+				$this->saveUserSetting($user, 'password', $hash);
+			}
+		}
 	}
 	
 }
