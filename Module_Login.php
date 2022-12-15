@@ -10,6 +10,7 @@ use GDO\UI\GDT_Link;
 use GDO\User\GDO_User;
 use GDO\UI\GDT_Page;
 use GDO\Crypto\GDT_PasswordHash;
+use GDO\User\GDT_ACLRelation;
 
 /**
  * Login module for GDOv7.
@@ -62,6 +63,13 @@ final class Module_Login extends GDO_Module
 	################
 	### Settings ###
 	################
+	public function getACLDefaults(): array
+	{
+		return [
+			'password' => [GDT_ACLRelation::HIDDEN, 0, null],
+		];
+	}
+	
 	public function getUserConfig(): array
 	{
 		return [
