@@ -89,13 +89,16 @@ final class Form extends MethodForm
 	 */
 	public function validateType(GDT_Form $form, GDT $field, $value) : bool
 	{
-	    if ($user = GDO_User::getByLogin($value))
-	    {
-	        if (!$user->isMember())
-	        {
-    	        return $field->error('err_user_type', [t('enum_member')]);
-	        }
-	    }
+		if ($value)
+		{
+		    if ($user = GDO_User::getByLogin($value))
+		    {
+		        if (!$user->isMember())
+		        {
+	    	        return $field->error('err_user_type', [t('enum_member')]);
+		        }
+		    }
+		}
 	    return true;
 	}
 	
