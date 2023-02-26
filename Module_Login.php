@@ -22,7 +22,7 @@ use GDO\User\GDT_ACLRelation;
  * - Warnings on failed logins (optionally show attacker IP to affected user)
  * 
  * @author gizmore@wechall.net
- * @version 7.0.1
+ * @version 7.0.2
  * @since 3.0.0
  */
 final class Module_Login extends GDO_Module

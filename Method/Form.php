@@ -22,6 +22,7 @@ use GDO\UI\GDT_Success;
 use GDO\Core\GDT_String;
 use GDO\Form\GDT_Validator;
 use GDO\Net\GDT_Url;
+use GDO\DBMS\Module_DBMS;
 
 /**
  * Login via GDOv7 credentials. Form and method.
@@ -152,9 +153,9 @@ final class Form extends MethodForm
 	################
 	### Security ###
 	################
-	private function banCut() { return Application::$TIME - $this->banTimeout(); }
-	private function banTimeout() { return Module_Login::instance()->cfgFailureTimeout(); }
-	private function maxAttempts() { return Module_Login::instance()->cfgFailureAttempts(); }
+	private function banCut(): int { return Application::$TIME - $this->banTimeout(); }
+	private function banTimeout(): int { return Module_Login::instance()->cfgFailureTimeout(); }
+	private function maxAttempts(): int { return Module_Login::instance()->cfgFailureAttempts(); }
 	
 	public function loginFailed($user)
 	{
@@ -192,15 +193,19 @@ final class Form extends MethodForm
 	
 	private function banData()
 	{
+		$dbms = Module_DBMS::instance();
 		$table = GDO_LoginAttempt::table();
-		$condition = sprintf('la_ip=%s AND la_time > FROM_UNIXTIME(%d)', GDO::quoteS(GDT_IP::current()), $this->banCut());
-		return $table->select('UNIX_TIMESTAMP(MIN(la_time)), COUNT(*)')->where($condition)->exec()->fetchRow();
+		$condition = sprintf('la_ip=%s AND la_time > ' . $dbms->dbmsFromUnixtime($this->banCut()), GDO::quoteS(GDT_IP::current()));
+		return $table->select($dbms->dbmsTimestamp('MIN(la_time)') . ', COUNT(*)')->where($condition)->exec()->fetchRow();
 	}
 	
 	private function checkSecurityThreat(GDO_User $user)
 	{
+		$dbms = Module_DBMS::instance();
 		$table = GDO_LoginAttempt::table();
-		$condition = sprintf('la_user_id=%s AND la_time > FROM_UNIXTIME(%d)', $user->getID(), $this->banCut());
+		$fromUnix = $dbms->dbmsFromUnixtime($this->banCut());
+		$condition = sprintf('la_user_id=%s AND la_time > %s',
+			$user->getID(), $fromUnix);
 		if (1 === $table->countWhere($condition))
 		{
 			if (module_enabled('Mail'))
