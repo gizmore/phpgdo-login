@@ -31,6 +31,7 @@ final class LoginTest extends TestCase
 		];
 		$m = GDT_MethodTest::make()->method(Form::make());
 		$m->inputs($p)->execute();
+		$this->assert200('Check if login has no error.');
 
 		$user1 = GDO_User::current();
 		$user2 = $this->gizmore();
