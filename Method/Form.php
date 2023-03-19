@@ -132,21 +132,24 @@ final class Form extends MethodForm
 	 */
 	public function loginSuccess(GDO_User $user, $bindIP=false)
 	{
-		if (!($session = GDO_Session::instance()))
+		if (module_enabled('Session'))
 		{
-			return $this->error('err_session_required');
-		}
-		$session->setVar('sess_user', $user->getID());
-		GDO_User::setCurrent($user, true);
-        if ($bindIP)
-        {
-    		$session->setVar('sess_ip', GDT_IP::current());
-        }
-		GDT_Hook::callWithIPC('UserAuthenticated', $user);
-		$this->message('msg_authenticated', [$user->renderUserName()]);
-		if ($href = $this->gdoParameterVar('_backto'))
-		{
-			$this->message('msg_back_to', [html($href)]);
+			if (!($session = GDO_Session::instance()))
+			{
+				$this->error('err_session_required');
+			}
+			$session->setVar('sess_user', $user->getID());
+			GDO_User::setCurrent($user, true);
+			if ($bindIP)
+			{
+				$session->setVar('sess_ip', GDT_IP::current());
+			}
+			GDT_Hook::callWithIPC('UserAuthenticated', $user);
+			$this->message('msg_authenticated', [$user->renderUserName()]);
+			if ($href = $this->gdoParameterVar('_backto'))
+			{
+				$this->message('msg_back_to', [html($href)]);
+			}
 		}
 	}
 
