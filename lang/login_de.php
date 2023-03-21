@@ -1,25 +1,26 @@
 <?php
 namespace GDO\Login\lang;
+
 return [
-'module_login' => 'Login',
-'mt_login_form' => 'Login',
-'tt_login' => 'Enter your username or email.',
-'tt_bind_ip' => 'Lock your session to your current IP.',
-'login' => 'Nutzerschlüssel',
+	'module_login' => 'Login',
+	'mt_login_form' => 'Login',
+	'tt_login' => 'Enter your username or email.',
+	'tt_bind_ip' => 'Lock your session to your current IP.',
+	'login' => 'Nutzerschlüssel',
 
-'bind_ip' => 'Sitzung an IP binden?',
-'btn_login' => 'Einloggen',
-'btn_logout' => 'Ausloggen (%s)',
-'logout' => 'Abmelden',
-'msg_logged_out' => 'Sie sind nun ausgeloggt.',
-'msg_authenticated' => 'Willkommen zurück. Sie sind nun authentifiziert als %s.<br/>Schauen Sie im rechten Menü für individuelle Funktionen.',
+	'bind_ip' => 'Sitzung an IP binden?',
+	'btn_login' => 'Einloggen',
+	'btn_logout' => 'Ausloggen (%s)',
+	'logout' => 'Abmelden',
+	'msg_logged_out' => 'Sie sind nun ausgeloggt.',
+	'msg_authenticated' => 'Willkommen zurück. Sie sind nun authentifiziert als %s.<br/>Schauen Sie im rechten Menü für individuelle Funktionen.',
 
-'err_user_deleted' => 'Dieses Konto wurde als gelöscht markiert. Bitte wenden Sie sich an einen Mitarbeiter dieser Webseite.',
-'err_login_failed' => 'Einloggen fehlgeschlagen. Sie haben noch %s Versuch(e) bis Sie für %s geblockt werden.',
-'err_login_ban' => 'Bitte warten Sie %s bevor Sie es erneut versuchen.',
+	'err_user_deleted' => 'Dieses Konto wurde als gelöscht markiert. Bitte wenden Sie sich an einen Mitarbeiter dieser Webseite.',
+	'err_login_failed' => 'Einloggen fehlgeschlagen. Sie haben noch %s Versuch(e) bis Sie für %s geblockt werden.',
+	'err_login_ban' => 'Bitte warten Sie %s bevor Sie es erneut versuchen.',
 #########
-'mail_subj_login_threat' => '[%s] Authentifizierungsversuch',
-'mail_body_login_threat' => '
+	'mail_subj_login_threat' => '[%s] Authentifizierungsversuch',
+	'mail_body_login_threat' => '
 Hallo %s,
 
 Für Ihr Konto gab es einen fehlgeschlagenen Authentifizierungsversuch von dieser IP.

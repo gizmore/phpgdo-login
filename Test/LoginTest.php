@@ -1,15 +1,15 @@
 <?php
 namespace GDO\Login\Test;
 
-use GDO\Tests\GDT_MethodTest;
-use GDO\Tests\TestCase;
 use GDO\Login\Method\Form;
 use GDO\Login\Method\Logout;
-use function PHPUnit\Framework\assertTrue;
-use function PHPUnit\Framework\assertFalse;
-use GDO\User\GDO_User;
-use function PHPUnit\Framework\assertStringContainsString;
+use GDO\Tests\GDT_MethodTest;
+use GDO\Tests\TestCase;
 use GDO\UI\GDT_Page;
+use GDO\User\GDO_User;
+use function PHPUnit\Framework\assertFalse;
+use function PHPUnit\Framework\assertStringContainsString;
+use function PHPUnit\Framework\assertTrue;
 
 /**
  * Login test.
@@ -18,7 +18,7 @@ use GDO\UI\GDT_Page;
  */
 final class LoginTest extends TestCase
 {
-	
+
 	public function testLoginSuccess()
 	{
 		$this->userGhost();
@@ -52,12 +52,12 @@ final class LoginTest extends TestCase
 		$this->userGhost();
 
 		# Trigger ban!
-		$parameters = array(
+		$parameters = [
 			'login' => 'gizmore',
 			'password' => 'incorrect',
 			'bind_ip' => '0',
 			'submit' => '1',
-		);
+		];
 		for ($i = 0; $i < 4; $i++)
 		{
 			GDT_MethodTest::make()->method(Form::make())

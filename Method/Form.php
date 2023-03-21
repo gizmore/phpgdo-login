@@ -3,56 +3,57 @@ namespace GDO\Login\Method;
 
 use GDO\Captcha\GDT_Captcha;
 use GDO\Core\Application;
-use GDO\Core\GDT;
-use GDO\Core\GDT_Hook;
 use GDO\Core\GDO;
+use GDO\Core\GDT;
+use GDO\Core\GDT_Checkbox;
+use GDO\Core\GDT_Hook;
+use GDO\Core\GDT_String;
+use GDO\Crypto\GDT_Password;
 use GDO\Date\Time;
+use GDO\DBMS\Module_DBMS;
 use GDO\Form\GDT_Form;
 use GDO\Form\GDT_Submit;
+use GDO\Form\GDT_Validator;
 use GDO\Form\MethodForm;
 use GDO\Login\GDO_LoginAttempt;
 use GDO\Login\Module_Login;
 use GDO\Mail\Mail;
 use GDO\Net\GDT_IP;
-use GDO\Core\GDT_Checkbox;
-use GDO\Crypto\GDT_Password;
-use GDO\Session\GDO_Session;
-use GDO\User\GDO_User;
-use GDO\UI\GDT_Success;
-use GDO\Core\GDT_String;
-use GDO\Form\GDT_Validator;
 use GDO\Net\GDT_Url;
-use GDO\DBMS\Module_DBMS;
+use GDO\Session\GDO_Session;
+use GDO\UI\GDT_Success;
+use GDO\User\GDO_User;
 
 /**
  * Login via GDOv7 credentials. Form and method.
- * 
- * @author gizmore
+ *
  * @version 7.0.1
  * @since 1.0.0
+ * @author gizmore
  */
 final class Form extends MethodForm
 {
+
 	public function checkPermission(GDO_User $user)
 	{
 		return true;
 	}
-	
-	public function getMethodTitle() : string
+
+	public function getMethodTitle(): string
 	{
 		return t('login');
 	}
-	
-	public function getMethodDescription() : string
+
+	public function getMethodDescription(): string
 	{
 		return t('login');
 	}
-	
-	public function isUserRequired() : bool { return false; }
-	
-	public function getUserType() : ?string { return 'ghost,guest'; }
-	
-	public function createForm(GDT_Form $form) : void
+
+	public function isUserRequired(): bool { return false; }
+
+	public function getUserType(): ?string { return 'ghost,guest'; }
+
+	public function createForm(GDT_Form $form): void
 	{
 		$form->action(href('Login', 'Form'));
 		$login = GDT_String::make('login')->icon('face')->tooltip('tt_login')->notNull();
@@ -69,46 +70,13 @@ final class Form extends MethodForm
 		$form->actions()->addField(GDT_Submit::make()->label('btn_login'));
 		GDT_Hook::callHook('LoginForm', $form);
 	}
-	
-	/**
-	 * Validate if the user to authenticate is deleted.
-	 */
-	public function validateDeleted(GDT_Form $form, GDT $field, $value) : bool
-	{
-	    if ($user = GDO_User::getByLogin($value))
-	    {
-	        if ($user->isDeleted())
-	        {
-	            return $field->error('err_user_deleted');
-	        }
-	    }
-	    return true;
-	}
-	
-	/**
-	 * Disallow system or bot users.
-	 */
-	public function validateType(GDT_Form $form, GDT $field, $value) : bool
-	{
-		if ($value)
-		{
-		    if ($user = GDO_User::getByLogin($value))
-		    {
-		        if (!$user->isMember())
-		        {
-	    	        return $field->error('err_user_type', [t('enum_member')]);
-		        }
-		    }
-		}
-	    return true;
-	}
-	
+
 	public function formValidated(GDT_Form $form)
 	{
 		return $this->onLogin($form->getFormVar('login'), $form->getFormVar('password'), $form->getFormVar('bind_ip'));
 	}
-	
-	public function onLogin($login, $password, $bindIP=false)
+
+	public function onLogin($login, $password, $bindIP = false)
 	{
 		if ($response = $this->banCheck())
 		{
@@ -116,21 +84,104 @@ final class Form extends MethodForm
 		}
 		$user = GDO_User::getByLogin($login);
 		$hash = $user ? Module_Login::instance()->userSettingValue($user, 'password') : null;
-		if ( (!$user) ||
-		     (!$hash) ||
-		     (!$hash->validate($password)) )
+		if (
+			(!$user) ||
+			(!$hash) ||
+			(!$hash->validate($password))
+		)
 		{
 			return $this->loginFailed($user)->addField($this->renderPage());
 		}
 		return $this->loginSuccess($user, $bindIP);
 	}
-	
+
+	private function banCheck()
+	{
+		[$mintime, $count] = $this->banData();
+		if ($count >= $this->maxAttempts())
+		{
+			$bannedFor = $mintime - $this->banCut();
+			return $this->error('err_login_ban', [Time::humanDuration($bannedFor)]);
+		}
+	}
+
+	private function banData()
+	{
+		$dbms = Module_DBMS::instance();
+		$table = GDO_LoginAttempt::table();
+		$condition = sprintf('la_ip=%s AND la_time > ' . $dbms->dbmsFromUnixtime($this->banCut()), GDO::quoteS(GDT_IP::current()));
+		return $table->select($dbms->dbmsTimestamp('MIN(la_time)') . ', COUNT(*)')->where($condition)->exec()->fetchRow();
+	}
+
+	private function banCut(): int { return Application::$TIME - $this->banTimeout(); }
+
+	################
+	### Security ###
+	################
+
+	private function banTimeout(): int { return Module_Login::instance()->cfgFailureTimeout(); }
+
+	private function maxAttempts(): int { return Module_Login::instance()->cfgFailureAttempts(); }
+
+	public function loginFailed($user)
+	{
+		# Insert attempt
+		$ip = GDT_IP::current();
+		$userid = $user ? $user->getID() : null;
+		GDO_LoginAttempt::blank([
+			'la_ip' => $ip,
+			'la_user_id' => $userid,
+		])->insert();
+
+		# Count victim attack. If only 1, we got a new threat and mail it.
+		if ($user)
+		{
+			$this->checkSecurityThreat($user);
+		}
+
+		# Count attacker attempts
+		[$mintime, $attempts] = $this->banData();
+		$bannedFor = $mintime - $this->banCut();
+		$attemptsLeft = $this->maxAttempts() - $attempts;
+
+		return $this->error('err_login_failed', [$attemptsLeft, Time::humanDuration($bannedFor)], 200);
+	}
+
+	private function checkSecurityThreat(GDO_User $user)
+	{
+		$dbms = Module_DBMS::instance();
+		$table = GDO_LoginAttempt::table();
+		$fromUnix = $dbms->dbmsFromUnixtime($this->banCut());
+		$condition = sprintf('la_user_id=%s AND la_time > %s',
+			$user->getID(), $fromUnix);
+		if (1 === $table->countWhere($condition))
+		{
+			if (module_enabled('Mail'))
+			{
+				$this->mailSecurityThreat($user);
+			}
+		}
+	}
+
+	private function mailSecurityThreat(GDO_User $user)
+	{
+		$mail = new Mail();
+		$mail->setSender(GDO_BOT_EMAIL);
+		$mail->setSubject(t('mail_subj_login_threat', [sitename()]));
+		$revealIP = Module_Login::instance()->cfgFailureIPReveal();
+		$ip = $revealIP ? GDT_IP::current() : 'xx.xx.xx.xx';
+		$args = [$user->renderName(), sitename(), $ip];
+		$mail->setBody(t('mail_body_login_threat', $args));
+		$mail->sendToUser($user);
+	}
+
 	/**
 	 * @param GDO_User $user
 	 * @param bool $bindIP
+	 *
 	 * @return GDT_Success
 	 */
-	public function loginSuccess(GDO_User $user, $bindIP=false)
+	public function loginSuccess(GDO_User $user, $bindIP = false)
 	{
 		if (module_enabled('Session'))
 		{
@@ -153,81 +204,37 @@ final class Form extends MethodForm
 		}
 	}
 
-	################
-	### Security ###
-	################
-	private function banCut(): int { return Application::$TIME - $this->banTimeout(); }
-	private function banTimeout(): int { return Module_Login::instance()->cfgFailureTimeout(); }
-	private function maxAttempts(): int { return Module_Login::instance()->cfgFailureAttempts(); }
-	
-	public function loginFailed($user)
+	/**
+	 * Validate if the user to authenticate is deleted.
+	 */
+	public function validateDeleted(GDT_Form $form, GDT $field, $value): bool
 	{
-		# Insert attempt
-		$ip = GDT_IP::current();
-		$userid = $user ? $user->getID() : null;
-		GDO_LoginAttempt::blank([
-			"la_ip" => $ip,
-			'la_user_id' => $userid,
-		])->insert();
-		
-		# Count victim attack. If only 1, we got a new threat and mail it.
-		if ($user)
+		if ($user = GDO_User::getByLogin($value))
 		{
-			$this->checkSecurityThreat($user);
-		}
-		
-		# Count attacker attempts
-		list($mintime, $attempts) = $this->banData();
-		$bannedFor = $mintime - $this->banCut();
-		$attemptsLeft = $this->maxAttempts() - $attempts;
-		
-		return $this->error('err_login_failed', [$attemptsLeft, Time::humanDuration($bannedFor)], 200);
-	}
-	
-	private function banCheck()
-	{
-		list($mintime, $count) = $this->banData();
-		if ($count >= $this->maxAttempts())
-		{
-			$bannedFor = $mintime - $this->banCut();
-			return $this->error('err_login_ban', [Time::humanDuration($bannedFor)]);
-		}
-	}
-	
-	private function banData()
-	{
-		$dbms = Module_DBMS::instance();
-		$table = GDO_LoginAttempt::table();
-		$condition = sprintf('la_ip=%s AND la_time > ' . $dbms->dbmsFromUnixtime($this->banCut()), GDO::quoteS(GDT_IP::current()));
-		return $table->select($dbms->dbmsTimestamp('MIN(la_time)') . ', COUNT(*)')->where($condition)->exec()->fetchRow();
-	}
-	
-	private function checkSecurityThreat(GDO_User $user)
-	{
-		$dbms = Module_DBMS::instance();
-		$table = GDO_LoginAttempt::table();
-		$fromUnix = $dbms->dbmsFromUnixtime($this->banCut());
-		$condition = sprintf('la_user_id=%s AND la_time > %s',
-			$user->getID(), $fromUnix);
-		if (1 === $table->countWhere($condition))
-		{
-			if (module_enabled('Mail'))
+			if ($user->isDeleted())
 			{
-				$this->mailSecurityThreat($user);
+				return $field->error('err_user_deleted');
 			}
 		}
+		return true;
 	}
-	
-	private function mailSecurityThreat(GDO_User $user)
+
+	/**
+	 * Disallow system or bot users.
+	 */
+	public function validateType(GDT_Form $form, GDT $field, $value): bool
 	{
-		$mail = new Mail();
-		$mail->setSender(GDO_BOT_EMAIL);
-		$mail->setSubject(t('mail_subj_login_threat', [sitename()]));
-		$revealIP = Module_Login::instance()->cfgFailureIPReveal();
-		$ip = $revealIP ? GDT_IP::current() : 'xx.xx.xx.xx';
-		$args = [$user->renderName(), sitename(), $ip];
-		$mail->setBody(t('mail_body_login_threat', $args));
-		$mail->sendToUser($user);
+		if ($value)
+		{
+			if ($user = GDO_User::getByLogin($value))
+			{
+				if (!$user->isMember())
+				{
+					return $field->error('err_user_type', [t('enum_member')]);
+				}
+			}
+		}
+		return true;
 	}
-	
+
 }

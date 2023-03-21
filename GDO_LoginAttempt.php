@@ -9,15 +9,17 @@ use GDO\User\GDT_User;
 
 /**
  * Database table for login attempts.
- * 
- * @author gizmore
+ *
  * @version 7.0.0
  * @since 2.0
+ * @author gizmore
  */
 final class GDO_LoginAttempt extends GDO
 {
-	public function gdoCached() : bool { return false; }
-	public function gdoColumns() : array
+
+	public function gdoCached(): bool { return false; }
+
+	public function gdoColumns(): array
 	{
 		return [
 			GDT_AutoInc::make('la_id'),
@@ -26,5 +28,5 @@ final class GDO_LoginAttempt extends GDO
 			GDT_CreatedAt::make('la_time'),
 		];
 	}
-	
+
 }
