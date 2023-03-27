@@ -1,6 +1,7 @@
 <?php
 namespace GDO\Login\Method;
 
+use GDO\Core\GDT;
 use GDO\Core\GDT_Hook;
 use GDO\Core\Method;
 use GDO\Session\GDO_Session;
@@ -26,7 +27,7 @@ final class Logout extends Method
 		return t('logout');
 	}
 
-	public function execute()
+	public function execute(): GDT
 	{
 		$user = GDO_User::current();
 		GDT_Hook::callHook('BeforeLogout', $user);

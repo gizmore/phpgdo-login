@@ -2,6 +2,7 @@
 namespace GDO\Login\Method;
 
 use GDO\Admin\MethodAdmin;
+use GDO\Core\GDT;
 use GDO\Form\GDT_AntiCSRF;
 use GDO\Form\GDT_Form;
 use GDO\Form\GDT_Submit;
@@ -37,7 +38,7 @@ final class LoginAs extends MethodForm
 	##############
 	### Method ###
 	##############
-	public function isEnabled(): bool
+	public function isEnabled(): string
 	{
 		return Module_Login::instance()->cfgLoginAs();
 	}
@@ -52,7 +53,7 @@ final class LoginAs extends MethodForm
 		$form->actions()->addField(GDT_Submit::make()->label('btn_login_as'));
 	}
 
-	public function formValidated(GDT_Form $form)
+	public function formValidated(GDT_Form $form): GDT
 	{
 		$user = $form->getField('user_name')->getUser();
 		return $this->loginForm()->loginSuccess($user);

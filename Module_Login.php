@@ -1,6 +1,7 @@
 <?php
 namespace GDO\Login;
 
+use GDO\Core\Debug;
 use GDO\Core\GDO_Module;
 use GDO\Core\GDT_Checkbox;
 use GDO\Core\GDT_Int;
@@ -33,7 +34,13 @@ final class Module_Login extends GDO_Module
 	##############
 	### Module ###
 	##############
-	public function getClasses(): array { return [GDO_LoginAttempt::class, GDO_LoginHistory::class]; }
+	public function getClasses(): array
+	{
+		return [
+			GDO_LoginAttempt::class,
+			GDO_LoginHistory::class,
+		];
+	}
 
 	public function onLoadLanguage(): void { $this->loadLanguage('lang/login'); }
 
@@ -60,7 +67,7 @@ final class Module_Login extends GDO_Module
 	public function getACLDefaults(): array
 	{
 		return [
-			'password' => [GDT_ACLRelation::HIDDEN, 0, null],
+			'password' => [GDT_ACLRelation::HIDDEN, '0', null],
 		];
 	}
 

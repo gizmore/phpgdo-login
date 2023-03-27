@@ -7,6 +7,7 @@ use GDO\Core\GDO;
 use GDO\Core\GDT;
 use GDO\Core\GDT_Checkbox;
 use GDO\Core\GDT_Hook;
+use GDO\Core\GDT_Response;
 use GDO\Core\GDT_String;
 use GDO\Crypto\GDT_Password;
 use GDO\Date\Time;
@@ -34,9 +35,9 @@ use GDO\User\GDO_User;
 final class Form extends MethodForm
 {
 
-	public function checkPermission(GDO_User $user)
+	public function checkPermission(GDO_User $user): ?GDT
 	{
-		return true;
+		return null;
 	}
 
 	public function getMethodTitle(): string
@@ -71,7 +72,7 @@ final class Form extends MethodForm
 		GDT_Hook::callHook('LoginForm', $form);
 	}
 
-	public function formValidated(GDT_Form $form)
+	public function formValidated(GDT_Form $form): GDT
 	{
 		return $this->onLogin($form->getFormVar('login'), $form->getFormVar('password'), $form->getFormVar('bind_ip'));
 	}
@@ -202,6 +203,7 @@ final class Form extends MethodForm
 				$this->message('msg_back_to', [html($href)]);
 			}
 		}
+		return GDT_Response::make();
 	}
 
 	/**
