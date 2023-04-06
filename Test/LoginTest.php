@@ -56,17 +56,12 @@ final class LoginTest extends TestCase
 			'login' => 'gizmore',
 			'password' => 'incorrect',
 			'bind_ip' => '0',
-			'submit' => '1',
 		];
-		for ($i = 0; $i < 4; $i++)
-		{
-			GDT_MethodTest::make()->method(Form::make())
-				->inputs($parameters)
-				->execute();
-		}
 
-		$response = GDT_Page::instance()->topResponse();
-		$html = $response->render();
+		$this->callMethod(Form::make(), $parameters);
+		$this->callMethod(Form::make(), $parameters);
+		$r = $this->callMethod(Form::make(), $parameters);
+		$html = $r->render();
 		assertStringContainsString('Please wait', $html,
 			'Check if login is blocked after N attempts.');
 	}
