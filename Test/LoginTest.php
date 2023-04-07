@@ -62,8 +62,7 @@ final class LoginTest extends TestCase
 		$this->callMethod(Form::make(), $parameters);
 		$this->callMethod(Form::make(), $parameters);
 		$this->callMethod(Form::make(), $parameters);
-		$r = $this->callMethod(Form::make(), $parameters, false);
-		$html = $r->renderWebsite();
+		$html = $this->callMethod(Form::make(), $parameters, false);
 		assertStringContainsString('Please wait', $html,
 			'Check if login is blocked after N attempts.');
 	}

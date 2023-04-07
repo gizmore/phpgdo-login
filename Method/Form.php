@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace GDO\Login\Method;
 
 use GDO\Captcha\GDT_Captcha;
@@ -26,16 +27,17 @@ use GDO\UI\GDT_Success;
 use GDO\User\GDO_User;
 
 /**
- * Login via GDOv7 credentials. Form and method.
+ * Login via GDOv7 credentials.
+ * Form and Method.
  *
- * @version 7.0.1
+ * @version 7.0.3
  * @since 1.0.0
  * @author gizmore
  */
 final class Form extends MethodForm
 {
 
-	public function checkPermission(GDO_User $user): ?GDT
+	public function checkPermission(GDO_User $user, bool $silent = false): ?GDT
 	{
 		return null;
 	}
@@ -77,7 +79,7 @@ final class Form extends MethodForm
 		return $this->onLogin($form->getFormVar('login'), $form->getFormVar('password'), $form->getFormVar('bind_ip'));
 	}
 
-	public function onLogin($login, $password, $bindIP = false)
+	public function onLogin(string $login, string $password, bool $bindIP = false): GDT
 	{
 		if ($response = $this->banCheck())
 		{
@@ -124,7 +126,7 @@ final class Form extends MethodForm
 
 	private function maxAttempts(): int { return Module_Login::instance()->cfgFailureAttempts(); }
 
-	public function loginFailed($user)
+	public function loginFailed($user): GDT
 	{
 		# Insert attempt
 		$ip = GDT_IP::current();
@@ -148,7 +150,7 @@ final class Form extends MethodForm
 		return $this->error('err_login_failed', [$attemptsLeft, Time::humanDuration($bannedFor)], 200);
 	}
 
-	private function checkSecurityThreat(GDO_User $user)
+	private function checkSecurityThreat(GDO_User $user): void
 	{
 		$dbms = Module_DBMS::instance();
 		$table = GDO_LoginAttempt::table();
@@ -164,7 +166,7 @@ final class Form extends MethodForm
 		}
 	}
 
-	private function mailSecurityThreat(GDO_User $user)
+	private function mailSecurityThreat(GDO_User $user): void
 	{
 		$mail = new Mail();
 		$mail->setSender(GDO_BOT_EMAIL);
@@ -176,13 +178,7 @@ final class Form extends MethodForm
 		$mail->sendToUser($user);
 	}
 
-	/**
-	 * @param GDO_User $user
-	 * @param bool $bindIP
-	 *
-	 * @return GDT_Success
-	 */
-	public function loginSuccess(GDO_User $user, $bindIP = false)
+	public function loginSuccess(GDO_User $user, bool $bindIP = false): GDT
 	{
 		if (module_enabled('Session'))
 		{
