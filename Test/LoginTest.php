@@ -50,19 +50,16 @@ final class LoginTest extends TestCase
 	public function testLogoutAndLoginBlocked()
 	{
 		$this->userGhost();
-
 		# Trigger ban!
 		$parameters = [
 			'login' => 'gizmore',
 			'password' => 'incorrect',
 			'bind_ip' => '0',
-			'submit' => '1',
 		];
-
-		$this->callMethod(Form::make(), $parameters);
-		$this->callMethod(Form::make(), $parameters);
-		$this->callMethod(Form::make(), $parameters);
-		$html = $this->callMethod(Form::make(), $parameters, false);
+		$this->callMethod(Form::make(), $parameters, 'submit');
+		$this->callMethod(Form::make(), $parameters, 'submit');
+		$this->callMethod(Form::make(), $parameters, 'submit');
+		$html = $this->callMethod(Form::make(), $parameters, 'submit', false);
 		assertStringContainsString('Please wait', $html,
 			'Check if login is blocked after N attempts.');
 	}

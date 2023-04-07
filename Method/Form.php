@@ -76,7 +76,7 @@ final class Form extends MethodForm
 
 	public function formValidated(GDT_Form $form): GDT
 	{
-		return $this->onLogin($form->getFormVar('login'), $form->getFormVar('password'), $form->getFormVar('bind_ip'));
+		return $this->onLogin($form->getFormVar('login'), $form->getFormVar('password'), $form->getFormValue('bind_ip'));
 	}
 
 	public function onLogin(string $login, string $password, bool $bindIP = false): GDT
