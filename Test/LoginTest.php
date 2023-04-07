@@ -56,12 +56,14 @@ final class LoginTest extends TestCase
 			'login' => 'gizmore',
 			'password' => 'incorrect',
 			'bind_ip' => '0',
+			'submit' => '1',
 		];
 
 		$this->callMethod(Form::make(), $parameters);
 		$this->callMethod(Form::make(), $parameters);
-		$r = $this->callMethod(Form::make(), $parameters);
-		$html = $r->render();
+		$this->callMethod(Form::make(), $parameters);
+		$r = $this->callMethod(Form::make(), $parameters, false);
+		$html = $r->renderWebsite();
 		assertStringContainsString('Please wait', $html,
 			'Check if login is blocked after N attempts.');
 	}
