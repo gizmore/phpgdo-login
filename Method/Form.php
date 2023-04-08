@@ -23,7 +23,6 @@ use GDO\Mail\Mail;
 use GDO\Net\GDT_IP;
 use GDO\Net\GDT_Url;
 use GDO\Session\GDO_Session;
-use GDO\UI\GDT_Success;
 use GDO\User\GDO_User;
 
 /**
@@ -98,7 +97,7 @@ final class Form extends MethodForm
 		return $this->loginSuccess($user, $bindIP);
 	}
 
-	private function banCheck()
+	private function banCheck(): ?GDT
 	{
 		[$mintime, $count] = $this->banData();
 		if ($count >= $this->maxAttempts())
@@ -106,9 +105,10 @@ final class Form extends MethodForm
 			$bannedFor = $mintime - $this->banCut();
 			return $this->error('err_login_ban', [Time::humanDuration($bannedFor)]);
 		}
+		return null;
 	}
 
-	private function banData()
+	private function banData(): ?array
 	{
 		$dbms = Module_DBMS::instance();
 		$table = GDO_LoginAttempt::table();
@@ -187,7 +187,7 @@ final class Form extends MethodForm
 				$this->error('err_session_required');
 			}
 			$session->setVar('sess_user', $user->getID());
-			GDO_User::setCurrent($user, true);
+			GDO_User::setCurrent($user);
 			if ($bindIP)
 			{
 				$session->setVar('sess_ip', GDT_IP::current());
