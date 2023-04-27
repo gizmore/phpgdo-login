@@ -36,6 +36,11 @@ use GDO\User\GDO_User;
 final class Form extends MethodForm
 {
 
+//	public function isDebugging(): bool
+//	{
+//		return true;
+//	}
+
 	public function checkPermission(GDO_User $user, bool $silent = false): ?GDT
 	{
 		return null;
