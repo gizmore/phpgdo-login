@@ -36,11 +36,6 @@ use GDO\User\GDO_User;
 final class Form extends MethodForm
 {
 
-//	public function isDebugging(): bool
-//	{
-//		return true;
-//	}
-
 	public function checkPermission(GDO_User $user, bool $silent = false): ?GDT
 	{
 		return null;
@@ -189,7 +184,7 @@ final class Form extends MethodForm
 		{
 			if (!($session = GDO_Session::instance()))
 			{
-				$this->error('err_session_required');
+				return $this->error('err_session_required');
 			}
 			$session->setVar('sess_user', $user->getID());
 			GDO_User::setCurrent($user);
@@ -203,6 +198,10 @@ final class Form extends MethodForm
 			{
 				$this->message('msg_back_to', [html($href)]);
 			}
+		}
+		else
+		{
+			return $this->error('err_session_required');
 		}
 		return GDT_Response::make();
 	}
