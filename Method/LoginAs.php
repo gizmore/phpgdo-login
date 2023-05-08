@@ -38,7 +38,7 @@ final class LoginAs extends MethodForm
 	##############
 	### Method ###
 	##############
-	public function isEnabled(): string
+	public function isEnabled(): bool
 	{
 		return Module_Login::instance()->cfgLoginAs();
 	}
@@ -46,7 +46,7 @@ final class LoginAs extends MethodForm
 	##################
 	### MethodForm ###
 	##################
-	public function createForm(GDT_Form $form): void
+	protected function createForm(GDT_Form $form): void
 	{
 		$form->addField(GDT_User::make('user_name')->notNull());
 		$form->addField(GDT_AntiCSRF::make());

@@ -55,7 +55,7 @@ final class Form extends MethodForm
 
 	public function getUserType(): ?string { return 'ghost,guest'; }
 
-	public function createForm(GDT_Form $form): void
+	protected function createForm(GDT_Form $form): void
 	{
 		$form->action(href('Login', 'Form'));
 		$login = GDT_String::make('login')->icon('face')->tooltip('tt_login')->notNull();
