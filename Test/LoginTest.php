@@ -19,6 +19,11 @@ use function PHPUnit\Framework\assertTrue;
 final class LoginTest extends TestCase
 {
 
+	protected function needsNewIP(): bool
+	{
+		return true;
+	}
+
 	public function testLoginSuccess()
 	{
 		$this->userGhost();
