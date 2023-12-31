@@ -13,7 +13,6 @@ return [
 	'login' => 'Login credentials',
 	'msg_logged_out' => 'You are now logged out.',
 	'msg_authenticated' => 'Welcome back, you are now authenticated as %s.<br/>Check out the right menu for your personal methods.',
-	'err_user_deleted' => 'This account is marked as deleted. Please contact the site\'s staff.',
 	'err_login_failed' => 'Login failed. You have %s more attempt(s) until you are blocked for %s.',
 	'err_login_ban' => 'Please wait %s before you try again.',
 #########

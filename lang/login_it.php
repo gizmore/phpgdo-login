@@ -13,7 +13,6 @@ return [
 	'logout' => 'Disconnetti',
 	'msg_logged_out' => 'Adesso siete sconnessi.',
 	'msg_authenticated' => 'Benvenuti indietro. Siete autentificati come %s.<br/>Cerca nel menu a destra le singole funzioni.',
-	'err_user_deleted' => 'Questo account è stato contrassegnato come eliminato. Si prega di contattare un dipendente di questo sito web.',
 	'err_login_failed' => 'Connessione fallita. Avete ancora %s tentativi affinche sarete bloccati per %s.',
 	'err_login_ban' => 'Prego attenda %s per riprovare.',
 #########
