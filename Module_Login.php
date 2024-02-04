@@ -128,7 +128,8 @@ final class Module_Login extends GDO_Module
 			if ($hash = $activation->getPasswordHash())
 			{
 				$this->saveUserSetting($user, 'password', $hash);
-			}
+                $activation->saveVar('user_password', null);
+            }
 		}
 	}
 
